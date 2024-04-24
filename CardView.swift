@@ -14,37 +14,40 @@ struct CardView: View {
     let card: Card
     @State private var isShowingAnswer = false
     @State private var offset = CGSize.zero
-    var removal: (() -> Void)? = nil
+    var removal: ((Bool) -> Void)? = nil
     
     var body: some View {
-        ZStack{
+        ZStack {
             RoundedRectangle(cornerRadius: 25)
                 .fill(
                     differentiateWithoutColor
                     ? .white
                     : .white
-                        .opacity(1 - Double(abs(offset.width / 50 )))
+                        .opacity(1 - Double(abs(offset.width / 50)))
                 )
                 .background(
-                    differentiateWithoutColor ? nil
+                    differentiateWithoutColor
+                    ? nil
                     : RoundedRectangle(cornerRadius: 25)
                         .fill(offset.width > 0 ? .green : .red)
                 )
                 .shadow(radius: 10)
             
-            VStack{
-                if voiceOverEnabled{
+            VStack {
+                if voiceOverEnabled {
                     Text(isShowingAnswer ? card.answer : card.prompt)
+                        .font(.largeTitle)
+                        .foregroundStyle(.black)
                 } else {
                     Text(card.prompt)
                         .font(.largeTitle)
                         .foregroundStyle(.black)
-                }
-               
-                if isShowingAnswer {
-                    Text(card.answer)
-                        .font(.title)
-                        .foregroundStyle(.black)
+                    
+                    if isShowingAnswer {
+                        Text(card.answer)
+                            .font(.title)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
             .padding(20)
@@ -61,9 +64,10 @@ struct CardView: View {
                     offset = gesture.translation
                 }
                 .onEnded { _ in
-                    if abs(offset.width) > 100 {
-                        removal?()
+                    if offset.width > 0 {
+                        removal?(false)
                     } else {
+                        removal?(true)
                         offset = .zero
                     }
                 }
@@ -73,7 +77,9 @@ struct CardView: View {
         }
         .animation(.bouncy, value: offset)
     }
+    
 }
+
 
 #Preview {
     CardView(card : .example)

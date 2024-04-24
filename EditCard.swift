@@ -27,6 +27,7 @@ struct EditCard: View {
                         VStack(alignment: .leading) {
                             Text(cards[index].prompt)
                                 .font(.headline)
+                            
                             Text(cards[index].answer)
                                 .foregroundStyle(.secondary)
                         }
@@ -69,6 +70,8 @@ struct EditCard: View {
         let card = Card(prompt: trimmedPrompt, answer: trimmedAnswer)
         cards.insert(card, at: 0)
         saveData()
+        newPrompt = ""
+        newAnswer = ""
         
     }
     
